@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 public class CubbyHole {
     public int Qsize = 50;
-    private BlockingQueue<Data> clientQueue = new ArrayBlockingQueue<>(Qsize);
-    private PriorityBlockingQueue<Data> processorQueue = new PriorityBlockingQueue<>(Qsize);
+    private BlockingQueue<NodeData> clientQueue = new ArrayBlockingQueue<>(Qsize);
+    private PriorityBlockingQueue<NodeData> processorQueue = new PriorityBlockingQueue<>(Qsize);
     private static int numProds = 0;
 
     private int numProcessors;

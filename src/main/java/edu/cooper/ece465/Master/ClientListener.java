@@ -50,7 +50,7 @@ public class ClientListener extends Thread {
                 s.close();
                 
                 for (int i = 0; i<numGranted; i++){
-                    putData(new Data(ia,p,0,-1));
+                    putData(new NodeData(ia,p,null,null,null));
                 }
             }
         } catch (IOException e) {
