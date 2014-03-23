@@ -5,7 +5,7 @@ import java.io.*;
 
 public class Data implements Comparable<Data>{
 	public InetAddress ia;
-	public int p;
+	public int portNumber;
 	public int requestType; // Relevant for clientQueue objects
 	public float priority; // Relevant for processorQueue objects
 	// 0: Client request to proc images
@@ -14,17 +14,17 @@ public class Data implements Comparable<Data>{
 	
 	public Data(InetAddress ia,int p, int requestType, float priority){
 		this.ia = ia;
-		this.p = p;
+		this.portNumber = p;
 		this.requestType = requestType;
 		this.priority = priority;
 	}
 	
 	public String toString(){
-		return "ia: "+ia+" and p:"+p;
+		return "ia: " + ia + " and port number:" + this.portNumber;
 	}
 
 	public int compareTo(Data compareData){
-		float compareQuantity = ((Data) compareData).priority;
+		float compareQuantity = compareData.priority;
 
 		return - ((int) ((this.priority - compareQuantity)*100));
 	}

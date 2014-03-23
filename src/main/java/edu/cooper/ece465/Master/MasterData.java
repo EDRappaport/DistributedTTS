@@ -42,9 +42,7 @@ public class MasterData implements Serializable{
         return this.expireTime;
     }
 
-    public String getHashKey(){
-        return this.hostname + ":" + this.portNumber;
-    }
+    public String getHashKey(){ return this.hostname + ":" + this.portNumber; }
 
     @Override
     public String toString(){
