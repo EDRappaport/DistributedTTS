@@ -62,8 +62,8 @@ public class Worker{
 
                 Socket clientSocket = new Socket(hostName, clientPort);
 
-                TTSWorker server = new TTSWorker();
-                server.spawnProtocolHandler(clientSocket);
+//                TTSWorker server = new TTSWorker();
+//                server.spawnProtocolHandler(clientSocket);
 
 
             } catch (ClassNotFoundException e) {

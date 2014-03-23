@@ -66,8 +66,8 @@
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <mainClass>edu.cooper.ece465.LoadBalancer.LoadBalancer</mainClass>
-                                <!--<argument>${loadBalancer.clientPort}</argument>-->
-                                <!--<argument>${loadBalancer.serverPort}</argument>-->
+                                <argument>${loadBalancer.clientPort}</argument>
+                                <argument>${loadBalancer.masterPort}</argument>
                             </arguments>
                         </configuration>
                     </plugin>
@@ -171,8 +171,8 @@
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <mainClass>edu.cooper.ece465.Processor.Worker</mainClass>
-                                <!--<argument>${master.clientPort}</argument>-->
-                                <!--<argument>${master.serverPort}</argument>-->
+                                <argument>${master.hostName}</argument>
+                                <argument>${master.producerPort}</argument>
                             </arguments>
                         </configuration>
                     </plugin>
@@ -276,8 +276,10 @@
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <mainClass>edu.cooper.ece465.Master.Master</mainClass>
-                                <!--<argument>${master.clientPort}</argument>-->
-                                <!--<argument>${master.serverPort}</argument>-->
+                                <argument>${master.clientPort}</argument>
+                                <argument>${master.producerPort}</argument>
+                                <argument>${loadBalancer.hostName}</argument>
+                                <argument>${loadBalancer.masterPort}</argument>
                             </arguments>
                         </configuration>
                     </plugin>

@@ -5,6 +5,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL 
  * WARRANTIES.
  */
+package edu.cooper.ece465.Processor;
 
 import com.sun.speech.freetts.Voice;
 import com.sun.speech.freetts.VoiceManager;
@@ -29,7 +30,7 @@ import java.net.Socket;
  * the client. For a complete specification of the protocol, please refer
  * to the document <code>Protocol.txt</code>.
  */
-public class TTSWorker extends TTSServer {
+public class TTSWorker {
 
     // 8k Voice
     private Voice voice8k;
