@@ -62,7 +62,10 @@ public class Worker{
 
                 Socket clientSocket = new Socket(hostName, clientPort);
 
-                
+                TTSWorker server = new TTSWorker();
+                server.spawnProtocolHandler(clientSocket);
+
+
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (SocketException e) {
