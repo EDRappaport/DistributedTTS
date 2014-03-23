@@ -67,13 +67,13 @@ ______				_____________				______ 					_________
 17. accept connection from
 	Worker
 
-17a. send fileName to Equalizer
-	and returnPort for Equalizer
-	to return file to
+17a. send fileName and partNumber
+	to Worker and returnPort for
+	Worker to return file to
 
 17b.																		read in fileName and returnPort
 
-18. send txt (in order)
+18. send txtPieces (in order)
 
 19.																			read in text from Client
 
@@ -81,7 +81,13 @@ ______				_____________				______ 					_________
 
 21.																			Process text
 
-22.																			Send audio back to returnPort
+22.																			Send fileName and partNumber
+																				to returnPort
 
-23. read audio and close
-	when all are returned
+22a.																		Send audio bytes
+
+23. read fileName and partNumber
+
+24. read in audio bytes
+
+25. combine files properly and save
