@@ -122,13 +122,11 @@ public class writeToProcessors extends Thread{
 		            Socket giveTextSocket = sSend.accept();
 		            System.out.println("Connected to Processing Server");
 	            	writer = new PrintWriter(giveTextSocket.getOutputStream(), true);
-	            	dataReader = new DataInputStream(giveTextSocket.getInputStream());
-	            	String readyLine = readLine();
 					// send TTS request to server
 					sendLine("TTS\n" +
 						 String.valueOf(sampleRate) + "\n" +
 						 fileName + "\n" + j + "\n" + returnPort + "\n" +
-						 textPieces[j] + "\n");	            	
+						 textPieces[j] + "\n" + "DONE");	            	
 
 					giveTextSocket.close();
 	            }
