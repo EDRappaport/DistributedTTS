@@ -59,6 +59,13 @@ public class Worker{
 
                 sRcv.close();
                 infoSocket.close();
+
+                Socket clientSocket = new Socket(hostName, clientPort);
+
+                TTSWorker server = new TTSWorker();
+                server.spawnProtocolHandler(clientSocket);
+
+
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (SocketException e) {

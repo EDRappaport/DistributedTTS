@@ -5,11 +5,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class CubbyHole {
+
     private int queueSize;
     private BlockingQueue<NodeData> clientQueue;
     private PriorityBlockingQueue<NodeData> producerQueue;
-
-    private int numProducers;
 
     public CubbyHole(int queueSize) {
         this.queueSize = queueSize;
