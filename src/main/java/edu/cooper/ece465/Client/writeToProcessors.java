@@ -20,6 +20,7 @@ import com.sun.speech.freetts.util.Utilities;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFormat;
 
@@ -53,9 +54,6 @@ public class writeToProcessors extends Thread{
 		StringBuffer buffer = new StringBuffer();
 
 		while ((c = (char) dataReader.readByte()) != '\n') {
-		    if (debug) {
-			System.out.println(c);
-		    }
 		    buffer.append(c);
 		}
 
@@ -80,29 +78,30 @@ public class writeToProcessors extends Thread{
 		}
     }
 
-	private static String[] splitFile(BufferedReader fileReader, int numPieces){
-		String[] allLines, textPieces;
+	private static String[] splitFile(BufferedReader fileReader, int numPieces) throws IOException {
+        ArrayList<String> allLines = new ArrayList<String>();
+        ArrayList<String> textPieces = new ArrayList<String>();
 		String line = fileReader.readLine();
 		for (int i = 0; line != null; i++){
-			allLines[i] = line;
+			allLines.add(line);
 			line = fileReader.readLine();
 		}
 
-		int numLines = allLines.length;
+		int numLines = allLines.size();
 		int linesPerWorker = numLines/numPieces;
 		int i, j;
-		//ex. 107 totalLines: 10 pieces each of 9 lines,
-		//last piece of remaing 8 lines
+		//ex. 107 totalLines: 10 pieces each of 10 lines,
+		//last piece of remaining 7 lines
 		for (i = 0, j = 0; i<numPieces-1; i++){
 			for (int k = 0; k<linesPerWorker; k++){
-				textPieces[i] = textPieces[i]+allLines[j++];
+				textPieces.add(textPieces.get(i)+allLines.get(j++));
 			}
 		}
 		for (int k = j; k < numLines; k++){
-			textPieces[i] = textPieces[i]+allLines[j++];
+			textPieces.set(i, textPieces.get(i)+allLines.get(j++));
 		}
 
-		return textPieces;
+		return (String[]) textPieces.toArray();
 	}
 
 	public void run(){

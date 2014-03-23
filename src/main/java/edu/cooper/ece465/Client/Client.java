@@ -6,12 +6,9 @@ import com.sun.speech.freetts.util.Utilities;
 
 import edu.cooper.ece465.Master.MasterData;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.sound.sampled.AudioFormat;
@@ -41,7 +38,7 @@ public class Client {
     }
 
 
-	public static void main(String[] args){
+	public static void main(String[] args) throws FileNotFoundException {
 
 		//check input
         if (args.length != 4){
@@ -67,59 +64,71 @@ public class Client {
         }
 
         //get fileSizes and decide to split
-        int[] fileSplits;
-        int minRequest, numRequested;
+        int[] fileSplits = new int[fileNames.length];
+        int minRequest, numRequested = 0;
         for(int i=0; i<fileNames.length; i++){
         	BufferedReader reader = new BufferedReader(new FileReader(fileNames[i]));
         	int numLines = 0;
-        	while (reader.readLine() != null) numLines++;
-        	reader.close();
+            try {
+                while (reader.readLine() != null) numLines++;
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        	fileSplits[i] = numLines/10;
+            fileSplits[i] = numLines/10;
         	numRequested += fileSplits[i] + 1;
         }
         minRequest = fileNames.length; //need at least minRequest Workers
 
 		//connect to Load Balancer
         System.out.println("Connecting To Load Balancer");
-        Socket sLB = new Socket(hostName, portNumber);
-        InputStream is = s.getInputStream();
-        ObjectInputStream ois = new ObjectInputStream(is);
-        MasterData masterData = (MasterData) ois.readObject();
-        System.out.println("Got Data Object:" + masterData.toString());
-        is.close();
-        sLB.close();
+        Socket sLB = null;
+        try {
+            sLB = new Socket(hostName, portNumber);
+            InputStream is = sLB.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            MasterData masterData = (MasterData) ois.readObject();
+            System.out.println("Got Data Object:" + masterData.toString());
+            is.close();
+            sLB.close();
 
-        //initiate client socket to Master
-        System.out.println("Connecting To Master Server");
-        Socket s = new Socket(masterData.getHostName(), masterData.getPortNumber());
+            //initiate client socket to Master
+            System.out.println("Connecting To Master Server");
+            Socket s = new Socket(masterData.getHostname(), masterData.getPortNumber());
 
-        //request numRequested from Master
-        BufferedReader inFromM = new BufferedReader(
-            new InputStreamReader(s.getInputStream()));
-        PrintWriter outToMaster = new PrintWriter(s.getOutputStream(), true);
-        outToM.println(minRequest);
-        outToM.println(numRequested);
-        int numGranted = Integer.parseInt(inFromM.readLine());
+            //request numRequested from Master
+            BufferedReader inFromM = new BufferedReader(
+                new InputStreamReader(s.getInputStream()));
+            PrintWriter outToMaster = new PrintWriter(s.getOutputStream(), true);
+            outToMaster.println(minRequest);
+            outToMaster.println(numRequested);
+            int numGranted = Integer.parseInt(inFromM.readLine());
 
-        //adjust fileSplits
-        for (int i = 0, j = 0; i < numRequested - numGranted; i++, j++){
-        	if (fileSplits[j] > 0) fileSplits[j]--;
-        	else i--;
-        	if (j == fileSplits.length - 1) j = 0;
-        }
+            //adjust fileSplits
+            for (int i = 0, j = 0; i < numRequested - numGranted; i++, j++){
+                if (fileSplits[j] > 0) fileSplits[j]--;
+                else i--;
+                if (j == fileSplits.length - 1) j = 0;
+            }
 
-        int originalPort = s.getLocalPort();
-        int returnPort = originalPort+1;
-        s.setReuseAddress(true);
+            int originalPort = s.getLocalPort();
+            int returnPort = originalPort+1;
+            s.setReuseAddress(true);
 
-        new writeToProcessors(originalPort, fileNames, fileSplits, returnPort, in_dir).start();
+            new writeToProcessors(originalPort, fileNames, fileSplits, returnPort, in_dir).start();
 
 
-        //wait for returned pieces
-        ServerSocket sRcv = new ServerSocket(returnPort);
-        for (int i = 0; i < numGranted; i++){
-        	Socket rcvSocket = sRcv.accept();
+            //wait for returned pieces
+            ServerSocket sRcv = new ServerSocket(returnPort);
+            for (int i = 0; i < numGranted; i++){
+                Socket rcvSocket = sRcv.accept();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
 	}
 }
