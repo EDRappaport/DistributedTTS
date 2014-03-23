@@ -230,11 +230,12 @@ class SocketTTSHandler implements Runnable {
 
         String fileName = reader.readLine();
         String partNumber = reader.readLine();
+        String returnAddress = reader.readLine();
         String returnPort = reader.readLine();
 	    String text = reader.readLine();
 
-        Socket returnSocket = new Socket();
-        this.socketAudioPlayer = new SocketAudioPlayer(socket);
+        Socket returnSocket = new Socket(returnAddress, Integer.parseInt(returnPort));
+        this.socketAudioPlayer = new SocketAudioPlayer(returnSocket, fileName, partNumber);
 
 	    voice.setAudioPlayer(socketAudioPlayer);
 	    voice.speak(text);

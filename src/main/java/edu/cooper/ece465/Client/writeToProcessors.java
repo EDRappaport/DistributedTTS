@@ -125,7 +125,7 @@ public class writeToProcessors extends Thread{
 					// send TTS request to server
 					sendLine("TTS\n" +
 						 String.valueOf(sampleRate) + "\n" +
-						 fileName + "\n" + j + "\n" + returnPort + "\n" +
+						 fileName + "\n" + j + "\n" + giveTextSocket.getLocalAddress() + "\n" + returnPort + "\n" +
 						 textPieces[j] + "\n" + "DONE");	            	
 
 					giveTextSocket.close();
