@@ -24,7 +24,7 @@ public class MasterSideListener extends Thread {
 
 	public void run(){
 		try {
-            ServerSocket serverSocket = new ServerSocket(portNumber);
+            ServerSocket serverSocket = new ServerSocket(this.portNumber);
             while (true) {
                 Socket s = serverSocket.accept();
                 System.out.println("Accepted New Worker Connection on Master");

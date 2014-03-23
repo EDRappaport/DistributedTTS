@@ -21,7 +21,11 @@ public class NodeData implements Serializable{
     }
 
     private double computeScore(float queueRatio, double systemLoad){
-        return ((1/queueRatio) + (1/systemLoad));
+        try {
+            return ((1/queueRatio) + (1/systemLoad));
+        } catch (ArithmeticException e){
+            return 0;
+        }
     }
 
     public String getHostname(){

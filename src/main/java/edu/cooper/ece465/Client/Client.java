@@ -15,7 +15,7 @@ import java.net.Socket;
  */
 public class Client {
 
-    public static String[] parseDirectory(String dir_string){
+    private static String[] parseDirectory(String dir_string){
         File dir = new File(dir_string);
         if(!dir.isDirectory()){
             System.out.println("Invalid directory entered");
@@ -31,6 +31,27 @@ public class Client {
         return dirFiles;
     }
 
+    private static int countNumLinesEfficient(String filename) throws IOException {
+        InputStream is = new BufferedInputStream(new FileInputStream(filename));
+        try {
+            byte[] c = new byte[1024];
+            int count = 0;
+            int readChars = 0;
+            boolean empty = true;
+            while ((readChars = is.read(c)) != -1) {
+                empty = false;
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == '\n') {
+                        ++count;
+                    }
+                }
+            }
+            return (count == 0 && !empty) ? 1 : count;
+        } finally {
+            is.close();
+        }
+    }
+
 
 	public static void main(String[] args) throws FileNotFoundException {
 
@@ -41,31 +62,29 @@ public class Client {
         }
         String hostName = args[0];
         int portNumber = Integer.parseInt(args[1]);
-        String in_dir = args[2];
-        String out_dir = args[3];
+        String inputDirectory = args[2];
+        String outputDirectory = args[3];
 
-        //get all input (.txt) files from in_dir
-        String[] fileNames = parseDirectory(in_dir);
-        File out_dir_f = new File(out_dir);
-        if (!out_dir_f.exists()){
-            if(!out_dir_f.mkdir() && !out_dir_f.mkdirs()){
+        //getClient all input (.txt) files from inputDirectory
+        String[] fileNames = parseDirectory(inputDirectory);
+        File outDirectoryFile = new File(outputDirectory);
+        if (!outDirectoryFile.exists()){
+            if(!outDirectoryFile.mkdir() && !outDirectoryFile.mkdirs()){
                 System.out.println("Could Not Create Directory");
                 System.exit(-1);
             }
-        } else if(!out_dir_f.isDirectory()){
+        } else if(!outDirectoryFile.isDirectory()){
             System.out.println("Please input a directory name for output");
             System.exit(-1);
         }
 
-        //get fileSizes and decide to split
+        //getClient fileSizes and decide to split
         int[] fileSplits = new int[fileNames.length];
         int minRequest, numRequested = 0;
         for(int i=0; i<fileNames.length; i++){
-        	BufferedReader reader = new BufferedReader(new FileReader(fileNames[i]));
-        	int numLines = 0;
+            int numLines = 0;
             try {
-                while (reader.readLine() != null) numLines++;
-                reader.close();
+                numLines = countNumLinesEfficient(fileNames[i]);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -77,9 +96,8 @@ public class Client {
 
 		//connect to Load Balancer
         System.out.println("Connecting To Load Balancer");
-        Socket sLB = null;
         try {
-            sLB = new Socket(hostName, portNumber);
+            Socket sLB = new Socket(hostName, portNumber);
             InputStream is = sLB.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
             NodeData nodeData = (NodeData) ois.readObject();
@@ -92,12 +110,11 @@ public class Client {
             Socket s = new Socket(nodeData.getHostname(), nodeData.getPortNumber());
 
             //request numRequested from Master
-            BufferedReader inFromM = new BufferedReader(
-                new InputStreamReader(s.getInputStream()));
-            PrintWriter outToMaster = new PrintWriter(s.getOutputStream(), true);
-            outToMaster.println(minRequest);
-            outToMaster.println(numRequested);
-            int numGranted = Integer.parseInt(inFromM.readLine());
+            DataInputStream dataFromMaster = new DataInputStream(s.getInputStream());
+            DataOutputStream dataToMaster = new DataOutputStream(s.getOutputStream());
+            dataToMaster.writeInt(minRequest);
+            dataToMaster.writeInt(numRequested);
+            int numGranted = dataFromMaster.readInt();
 
             //adjust fileSplits
             for (int i = 0, j = 0; i < numRequested - numGranted; i++, j++){
@@ -106,11 +123,12 @@ public class Client {
                 if (j == fileSplits.length - 1) j = 0;
             }
 
+            // TODO: Fix race condition of server socket for producers to connect to
             int originalPort = s.getLocalPort();
-            int returnPort = originalPort+1;
+            int returnPort = originalPort+1; // TODO: Use better logic for returnPort
             s.setReuseAddress(true);
 
-            new writeToProcessors(originalPort, fileNames, fileSplits, returnPort, in_dir).start();
+            new writeToProcessors(originalPort, fileNames, fileSplits, returnPort, inputDirectory).start();
 
 
             //wait for returned pieces

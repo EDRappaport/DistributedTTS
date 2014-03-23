@@ -31,7 +31,7 @@ public class Worker{
 
             try {
                 //attach to Master to introduce
-                Socket s = new Socket(masterHostName,masterPortNumber); // To EqualizerListener
+                Socket s = new Socket(masterHostName,masterPortNumber); // To ProducerListener
                 int originalPort = s.getLocalPort();
                 s.setReuseAddress(true);
                 System.out.println("Introduced to Master");

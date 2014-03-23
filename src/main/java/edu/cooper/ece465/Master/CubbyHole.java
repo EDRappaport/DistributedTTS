@@ -3,31 +3,22 @@ package edu.cooper.ece465.Master;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.lang.Object;
-import java.util.concurrent.TimeUnit;
 
 public class CubbyHole {
-    public int Qsize = 50;
-    private BlockingQueue<Data> clientQueue = new ArrayBlockingQueue<>(Qsize);
-    private PriorityBlockingQueue<Data> processorQueue = new PriorityBlockingQueue<>(Qsize);
-    private static int numProds = 0;
+    private int queueSize;
+    private BlockingQueue<NodeData> clientQueue;
+    private PriorityBlockingQueue<NodeData> producerQueue;
 
-    private int numProcessors;
+    private int numProducers;
 
-    public CubbyHole() {}
-    
-    public void addProducer() {
-        numProds++;
-    }
-    public void subProducer() {
-       numProds--;
-    }
-    public boolean isDone() {
-        return numProds==0;
+    public CubbyHole(int queueSize) {
+        this.queueSize = queueSize;
+        this.clientQueue = new ArrayBlockingQueue<>(this.queueSize);
+        this.producerQueue = new PriorityBlockingQueue<>(this.queueSize, new NodeDataComparator());
     }
 
-    public int getProcessorsCount(){
-        return numProcessors;
+    public int getProducerCount(){
+        return this.producerQueue.size();
     }
 
     //for LB stats:
@@ -35,12 +26,10 @@ public class CubbyHole {
         return clientQueue.remainingCapacity();
     }
 
-    public Data get() { // Get Client From Queue
-        Data ret = null;
+    public NodeData getClient() { // Get Client From Queue
+        NodeData ret = null;
         try{
-            if (!isDone()){
-                ret = clientQueue.take();
-            }
+            ret = this.clientQueue.take();
         } catch (InterruptedException e){
             System.err.println("Take error: " + e);
         }
@@ -48,28 +37,25 @@ public class CubbyHole {
         return ret;
     }
 
-    public void put(Data value) { // Put Client into Queue
+    public void putClient(NodeData value) { // Put Client into Queue
         try{
-            clientQueue.put(value);
+            this.clientQueue.put(value);
         } catch (InterruptedException e){
             System.err.println("Put error: " + e);
         }
     }
 
-    public void putProcessor(Data value){
-        processorQueue.put(value);
-        numProcessors++;
+    public void putProducer(NodeData value){
+        this.producerQueue.put(value);
     }
 
-    public Data getProcessor(){
-        Data ret = null;
+    public NodeData getProducer(){
+        NodeData ret = null;
         try{
-            ret = processorQueue.take();
-            numProcessors--;
+            ret = this.producerQueue.take();
         } catch (InterruptedException e){
             System.err.println("Processor Take error: " + e);
         }
         return ret;
     }
-
 }
