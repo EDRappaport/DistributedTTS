@@ -1,0 +1,87 @@
+
+
+Client				Load Balancer				Master					Equalizer
+______				_____________				______ 					_________
+
+1.					Waiting for connection		Waiting for	connection
+						from both Clients			from both Clients
+						and Masters					Equalizers
+
+1a.												socket to LB			socket to Master
+
+1b.												tell LB what port 		tell Master load on node
+													Clients can connect 	and number of threads
+
+1c.					continuously read in Master	continuously update LB on
+						load info				load info
+
+1d.												rcv from Eq information
+													and add to priority q
+
+2. socket to LB
+
+3.					Accept Client
+
+4.					Find an available Master, 
+						send best Master
+						(ip:socket) to Client
+
+5. read in Master
+	(ip:socket)
+
+6. close socket to	close connection with Client
+	LB
+
+7. socket to Master
+
+8.												Accept Client
+
+9. send Master number
+	of requested Workers
+
+10.												read in numRequested
+
+11.												decide how many workers
+													to grant
+
+12.												send to Client Workers granted
+
+12a. split up image based						
+	on expected Workers
+
+13. Open server socket							Add Client to cubbyhole
+	to accept connection							multiple times (according
+	from Workers									to # of Workers)
+
+14. Open server socket
+	to accept connection
+	from Workers for
+	returned images
+
+15.												Send Client (ip:socket)
+													from to best Worker
+													from priority q
+
+16. 																		Connect to client
+
+17. accept connection from
+	Worker
+
+17a. send fileName to Equalizer
+	and returnPort for Equalizer
+	to return file to
+
+17b.																		read in fileName and returnPort
+
+18. send txt (in order)
+
+19.																			read in text from Client
+
+20.
+
+21.																			Process text
+
+22.																			Send audio back to returnPort
+
+23. read audio and close
+	when all are returned
