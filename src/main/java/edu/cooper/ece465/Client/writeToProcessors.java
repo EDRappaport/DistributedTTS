@@ -124,10 +124,6 @@ public class writeToProcessors extends Thread{
 	            	writer = new PrintWriter(giveTextSocket.getOutputStream(), true);
 	            	dataReader = new DataInputStream(giveTextSocket.getInputStream());
 	            	String readyLine = readLine();
-	            	if (!readyLine.equals("READY")){
-	            		System.err.println("Server Not Ready");
-	            		System.exit(-1);
-	            	}
 					// send TTS request to server
 					sendLine("TTS\n" +
 						 String.valueOf(sampleRate) + "\n" +
