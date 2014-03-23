@@ -1,12 +1,11 @@
 package edu.cooper.ece465.LoadBalancer;
 
-import edu.cooper.ece465.Master.MasterData;
-import edu.cooper.ece465.Master.MasterDataComparator;
+import edu.cooper.ece465.Master.NodeData;
+import edu.cooper.ece465.Master.NodeDataComparator;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -23,9 +22,9 @@ public class LoadBalancer {
     	int clientPort = Integer.parseInt(args[0]);
     	int masterPort = Integer.parseInt(args[1]);
 
-        Comparator<MasterData> comparator = new MasterDataComparator();
-        PriorityBlockingQueue<MasterData> masterQueue = new PriorityBlockingQueue<>(10, comparator);
-        Map<String, MasterData> masterHash = new HashMap<>();
+        Comparator<NodeData> comparator = new NodeDataComparator();
+        PriorityBlockingQueue<NodeData> masterQueue = new PriorityBlockingQueue<>(10, comparator);
+        Map<String, NodeData> masterHash = new HashMap<>();
 
     	new MasterSideListener(masterPort, masterQueue, masterHash).start();
 
@@ -35,7 +34,7 @@ public class LoadBalancer {
                 System.out.println("Listening for Clients");
                 Socket socket = serverSocket.accept();
 
-                MasterData masterFound = null;
+                NodeData masterFound = null;
                 while (masterQueue.size() > 0){
                     masterFound = masterQueue.poll();
                     Date now = new Date();

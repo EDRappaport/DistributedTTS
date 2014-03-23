@@ -3,19 +3,21 @@ package edu.cooper.ece465.Master;
 import java.io.Serializable;
 import java.util.Date;
 
-public class MasterData implements Serializable{
+public class NodeData implements Serializable{
 
     private String hostname;
     private int portNumber;
     private double score;
     private Date expireTime;
 
-    public MasterData(String hostname, int portNumber, float queueRatio, double systemLoad, int timeToLive){
+    public NodeData(String hostname, int portNumber, float queueRatio, double systemLoad, int timeToLive){
         this.hostname = hostname;
         this.portNumber = portNumber;
         this.score = computeScore(queueRatio, systemLoad);
-        this.expireTime = new Date();
-        this.expireTime.setTime(this.expireTime.getTime() + timeToLive);
+        if (timeToLive != -1){
+            this.expireTime = new Date();
+            this.expireTime.setTime(this.expireTime.getTime() + timeToLive);
+        }
     }
 
     private double computeScore(float queueRatio, double systemLoad){

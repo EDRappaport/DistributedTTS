@@ -28,7 +28,7 @@ public class LBChatter extends Thread {
                 OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
                 double load = osBean.getSystemLoadAverage();
                 Socket socketLB = new Socket(hostName, portNumber);
-                MasterData data = new MasterData(socketLB.getLocalAddress().getHostName(), this.clientPort,
+                NodeData data = new NodeData(socketLB.getLocalAddress().getHostName(), this.clientPort,
                         this.c.getQueueRatio(), load, this.timeToLiveMS);
                 OutputStream os = socketLB.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(os);

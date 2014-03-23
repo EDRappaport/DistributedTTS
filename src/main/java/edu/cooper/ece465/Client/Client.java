@@ -1,17 +1,11 @@
 package edu.cooper.ece465.Client;
 
-import com.sun.speech.freetts.audio.AudioPlayer;
-import com.sun.speech.freetts.audio.JavaStreamingAudioPlayer;
-import com.sun.speech.freetts.util.Utilities;
-
-import edu.cooper.ece465.Master.MasterData;
+import edu.cooper.ece465.Master.NodeData;
 
 import java.io.*;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import javax.sound.sampled.AudioFormat;
 
 
 /**
@@ -88,14 +82,14 @@ public class Client {
             sLB = new Socket(hostName, portNumber);
             InputStream is = sLB.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
-            MasterData masterData = (MasterData) ois.readObject();
-            System.out.println("Got Data Object:" + masterData.toString());
+            NodeData nodeData = (NodeData) ois.readObject();
+            System.out.println("Got Data Object:" + nodeData.toString());
             is.close();
             sLB.close();
 
             //initiate client socket to Master
             System.out.println("Connecting To Master Server");
-            Socket s = new Socket(masterData.getHostname(), masterData.getPortNumber());
+            Socket s = new Socket(nodeData.getHostname(), nodeData.getPortNumber());
 
             //request numRequested from Master
             BufferedReader inFromM = new BufferedReader(

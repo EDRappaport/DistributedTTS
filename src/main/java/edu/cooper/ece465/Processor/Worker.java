@@ -1,11 +1,6 @@
 package edu.cooper.ece465.Processor;
 
-import edu.cooper.ece465.Master.MasterData;
-
-import com.sun.speech.freetts.Voice;
-import com.sun.speech.freetts.VoiceManager;
-
-import com.sun.speech.freetts.util.Utilities;
+import edu.cooper.ece465.Master.NodeData;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -44,7 +39,7 @@ public class Worker{
                 //tell Master your info
                 OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
                 double load = osBean.getSystemLoadAverage();
-                MasterData data = new MasterData(s.getLocalAddress().getHostName(), originalPort,
+                NodeData data = new NodeData(s.getLocalAddress().getHostName(), originalPort,
                         1, load, -1);
                 OutputStream os = s.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(os);
@@ -57,7 +52,7 @@ public class Worker{
                 Socket infoSocket = sRcv.accept();
                 InputStream is = infoSocket.getInputStream();
                 ObjectInputStream ois = new ObjectInputStream(is);
-                MasterData clientData = (MasterData) ois.readObject();
+                NodeData clientData = (NodeData) ois.readObject();
 
                 String hostName = clientData.getHostname();
                 int clientPort = clientData.getPortNumber();

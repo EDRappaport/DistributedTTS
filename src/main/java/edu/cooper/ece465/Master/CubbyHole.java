@@ -27,7 +27,6 @@ public class CubbyHole {
     }
 
     public int getProcessorsCount(){
-        //return Qsize - processorQueue.remainingCapacity();
         return numProcessors;
     }
 

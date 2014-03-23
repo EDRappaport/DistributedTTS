@@ -1,6 +1,6 @@
 package edu.cooper.ece465.LoadBalancer;
 
-import edu.cooper.ece465.Master.MasterData;
+import edu.cooper.ece465.Master.NodeData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class MasterSideListener extends Thread {
-	private PriorityBlockingQueue<MasterData> masterQueue;
-    private Map<String, MasterData> masterHashMap;
+	private PriorityBlockingQueue<NodeData> masterQueue;
+    private Map<String, NodeData> masterHashMap;
 	private int portNumber;
 
-	public MasterSideListener(int portNumber, PriorityBlockingQueue<MasterData> masterQueue,
-                              Map<String, MasterData> masterHashMap) {
+	public MasterSideListener(int portNumber, PriorityBlockingQueue<NodeData> masterQueue,
+                              Map<String, NodeData> masterHashMap) {
 		this.masterQueue = masterQueue;
         this.masterHashMap = masterHashMap;
 		this.portNumber = portNumber;
@@ -30,16 +30,16 @@ public class MasterSideListener extends Thread {
                 System.out.println("Accepted New Worker Connection on Master");
                 InputStream is = s.getInputStream();
                 ObjectInputStream ois = new ObjectInputStream(is);
-                MasterData masterData = (MasterData) ois.readObject();
-                System.out.println("Got Data Object:" + masterData.toString());
-                String key = masterData.getHashKey();
+                NodeData nodeData = (NodeData) ois.readObject();
+                System.out.println("Got Data Object:" + nodeData.toString());
+                String key = nodeData.getHashKey();
                 System.out.println(this.masterQueue);
                 if (this.masterHashMap.containsKey(key)){
-                    MasterData toRemove = this.masterHashMap.get(key);
+                    NodeData toRemove = this.masterHashMap.get(key);
                     this.masterQueue.remove(toRemove);
                 }
-                this.masterQueue.add(masterData);
-                this.masterHashMap.put(key, masterData);
+                this.masterQueue.add(nodeData);
+                this.masterHashMap.put(key, nodeData);
                 System.out.println(this.masterQueue);
 
                 is.close();
