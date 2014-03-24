@@ -65,8 +65,8 @@ public class Producer {
                 Thread.sleep(5000);
                 Socket clientSocket = new Socket(hostName, clientPort);
 
-//                TTSWorker server = new TTSWorker();
-//                server.spawnProtocolHandler(clientSocket);
+                TTSWorker server = new TTSWorker();
+                server.spawnProtocolHandler(clientSocket);
 
 
             } catch (ClassNotFoundException e) {
