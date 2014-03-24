@@ -11,6 +11,7 @@ public class ClientProducerAssigner extends Thread {
 	}
 
     private void assignProducer(NodeData client) throws IOException {
+        System.out.println(this.cubbyhole.getProducers());
         NodeData curProcessor = this.cubbyhole.getProducer();
         Socket s = new Socket(curProcessor.getHostname(), curProcessor.getPortNumber());
         System.out.println("Sending New Assignment to " + client);
