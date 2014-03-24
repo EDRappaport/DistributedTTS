@@ -84,7 +84,7 @@ public class Client {
         for(int i=0; i<fileNames.length; i++){
             int numLines = 0;
             try {
-                numLines = countNumLinesEfficient(fileNames[i]);
+                numLines = countNumLinesEfficient(inputDirectory + fileNames[i]);
             } catch (IOException e) {
                 e.printStackTrace();
             }
