@@ -82,19 +82,19 @@ public class Client {
     }
 
 
-    private ArrayList<byte[]> receiveAndStore(int numberSamples) {
+    private ArrayList<Byte> receiveAndStore(int numberSamples) {
 
 	int bytesToRead;
 	int bytesRemaining;
 
-	ArrayList<byte> allBytes = new ArrayList<byte>();
+	ArrayList<Byte> allBytes = new ArrayList<>();
 
 	bytesRemaining = numberSamples;
 
 	while (bytesRemaining > 0) {
 
 		try{
-			allBytes.add(socketBuffer);
+			allBytes.add(dataReader.readByte());
 			bytesRemaining--;
 		} catch (IOException ioe) {
 		ioe.printStackTrace();
@@ -201,13 +201,13 @@ public class Client {
 				if (numberSamples > 0) {
 				    System.out.println
 					("Receiving : " + numberSamples + " samples");
-				    ArrayList<byte> receivedBytes = receiveAndStore(numberSamples);
+				    ArrayList<Byte> receivedBytes = receiveAndStore(numberSamples);
 				    allData.put(fileNames+":"+partNumber, receivedBytes);
 				}
             }
 
             for (int i = 0; i<fileNames.length; i++){
-            	ArrayList<byte> curBytes = new ArrayList<byte>();
+            	ArrayList<Byte> curBytes = new ArrayList<>();
             	for(int j = 0; j<fileSplits[i]; j++){
             		curBytes.addAll(allData.get(fileNames[i]+":"+j));
             	}
