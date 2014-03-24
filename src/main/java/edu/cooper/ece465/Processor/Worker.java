@@ -48,6 +48,7 @@ public class Worker{
                 os.close();
 
                 //acccept info from Master
+                System.out.println("Waiting for assignment");
                 ServerSocket sRcv = new ServerSocket(originalPort);
                 Socket infoSocket = sRcv.accept();
                 InputStream is = infoSocket.getInputStream();

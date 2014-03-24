@@ -78,7 +78,7 @@ public class writeToProcessors extends Thread{
 		}
     }
 
-	private static String[] splitFile(BufferedReader fileReader, int numPieces) throws IOException {
+	private static ArrayList<String> splitFile(BufferedReader fileReader, int numPieces) throws IOException {
         ArrayList<String> allLines = new ArrayList<String>();
         ArrayList<String> textPieces = new ArrayList<String>();
 		String line = fileReader.readLine();
@@ -97,11 +97,12 @@ public class writeToProcessors extends Thread{
 				textPieces.add(textPieces.get(i)+allLines.get(j++));
 			}
 		}
+        textPieces.add("");
 		for (int k = j; k < numLines; k++){
 			textPieces.set(i, textPieces.get(i)+allLines.get(j++));
 		}
 
-		return (String[]) textPieces.toArray();
+		return textPieces;
 	}
 
 	public void run(){
@@ -112,13 +113,13 @@ public class writeToProcessors extends Thread{
 
 			//loop through images in directory
 	        for(int i = 0; i < fileNames.length; i++) {
-	        	String fileName = fileNames[i];
+	        	String fileName = this.in_dir + fileNames[i];
 	        	int numPieces = fileSplits[i] + 1;
 
 	            fileReader = new BufferedReader(new FileReader(fileName));
-	            String[] textPieces = splitFile(fileReader, numPieces);
+	            ArrayList<String> textPieces = splitFile(fileReader, numPieces);
 
-	            for (int j = 0; j<textPieces.length; j++){
+	            for (int j = 0; j<textPieces.size(); j++){
 		            Socket giveTextSocket = sSend.accept();
 		            System.out.println("Connected to Processing Server");
 	            	writer = new PrintWriter(giveTextSocket.getOutputStream(), true);
@@ -126,7 +127,7 @@ public class writeToProcessors extends Thread{
 					sendLine("TTS\n" +
 						 String.valueOf(sampleRate) + "\n" +
 						 fileName + "\n" + j + "\n" + giveTextSocket.getLocalAddress() + "\n" + returnPort + "\n" +
-						 textPieces[j] + "\n" + "DONE");	            	
+						 textPieces.get(j) + "\n" + "DONE");
 
 					giveTextSocket.close();
 	            }
