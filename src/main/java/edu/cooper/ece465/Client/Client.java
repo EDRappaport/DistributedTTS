@@ -3,9 +3,11 @@ package edu.cooper.ece465.Client;
 import edu.cooper.ece465.Master.NodeData;
 
 import java.io.*;
-
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -15,7 +17,7 @@ import java.net.Socket;
  */
 public class Client {
 
-	private DataInputStream dataReader;
+	static private DataInputStream dataReader;
 	private static final int AUDIO_BUFFER_SIZE = 256;
 	private byte[] socketBuffer = new byte[AUDIO_BUFFER_SIZE];
 
@@ -58,15 +60,12 @@ public class Client {
 
 
     //copied from Sun Microsystems, Inc
-    private String readLine() throws IOException {
+    static private String readLine() throws IOException {
 		int i;
 		char c;
 		StringBuffer buffer = new StringBuffer();
 
 		while ((c = (char) dataReader.readByte()) != '\n') {
-		    if (debug) {
-			System.out.println(c);
-		    }
 		    buffer.append(c);
 		}
 
@@ -82,7 +81,7 @@ public class Client {
     }
 
 
-    private ArrayList<Byte> receiveAndStore(int numberSamples) {
+    private static ArrayList<Byte> receiveAndStore(int numberSamples) {
 
 	int bytesToRead;
 	int bytesRemaining;
@@ -183,10 +182,10 @@ public class Client {
 
             //wait for returned pieces
             ServerSocket sRcv = new ServerSocket(returnPort);
-            Map<String, ArrayList<byte[]>> allData = new HashMap<>();
+            Map<String, ArrayList<Byte>> allData = new HashMap<>();
             for (int i = 0; i < numGranted; i++){
                 Socket rcvSocket = sRcv.accept();
-                dataReader = new DataInputStream(sRcv.getInputStream());
+                dataReader = new DataInputStream(rcvSocket.getInputStream());
 
                 String fileName = readLine();
                 String partNumber = readLine();
@@ -213,7 +212,11 @@ public class Client {
             	}
             	File dstFile = new File(outputDirectory+"/"+fileNames[i]+".wav");
             	FileOutputStream out = new FileOutputStream(dstFile);
-            	out.write(curBytes);
+                byte[] b = new byte[curBytes.size()];
+                for (int k=0; k<b.length; k++) {
+                    b[k] = curBytes.get(k);
+                }
+            	out.write(b);
             	out.close();
             }
 
