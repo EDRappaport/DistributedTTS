@@ -130,9 +130,9 @@ public class SocketAudioPlayer implements AudioPlayer {
 	    bytesToPlay = size;
 	    firstByteSent = false;
 
-        dataOutputStream.writeBytes(fileName);
+        dataOutputStream.writeBytes(fileName+"\n");
         dataOutputStream.flush();
-        dataOutputStream.writeBytes(partNumber);
+        dataOutputStream.writeBytes(partNumber+"\n");
         dataOutputStream.flush();
 
 	    dataOutputStream.writeBytes(String.valueOf(size) + "\n");
