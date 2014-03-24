@@ -5,7 +5,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL 
  * WARRANTIES.
  */
-package edu.cooper.ece465.Processor;
+package edu.cooper.ece465.Producer;
 
 import com.sun.speech.freetts.Voice;
 import com.sun.speech.freetts.VoiceManager;
@@ -13,11 +13,9 @@ import com.sun.speech.freetts.VoiceManager;
 import com.sun.speech.freetts.util.Utilities;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 

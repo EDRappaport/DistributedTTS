@@ -170,7 +170,7 @@
                                 <argument>-Dlog4j.debug</argument>
                                 <argument>-classpath</argument>
                                 <classpath/>
-                                <mainClass>edu.cooper.ece465.Processor.Worker</mainClass>
+                                <mainClass>edu.cooper.ece465.Producer.Producer</mainClass>
                                 <argument>${master.hostName}</argument>
                                 <argument>${master.producerPort}</argument>
                             </arguments>

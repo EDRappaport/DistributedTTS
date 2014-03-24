@@ -3,19 +3,20 @@ package edu.cooper.ece465.Master;
 import java.net.*;
 import java.io.*;
 
-public class ClientProcessorAssigner extends Thread {
+public class ClientProducerAssigner extends Thread {
 	private CubbyHole cubbyhole;
 
-	public ClientProcessorAssigner(CubbyHole c){
+	public ClientProducerAssigner(CubbyHole c){
 		this.cubbyhole = c;
 	}
 
     private void assignProducer(NodeData client) throws IOException {
         NodeData curProcessor = this.cubbyhole.getProducer();
         Socket s = new Socket(curProcessor.getHostname(), curProcessor.getPortNumber());
-        System.out.println("Sending New Assignment");
+        System.out.println("Sending New Assignment to " + client);
         ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
         oos.writeObject(client);
+        System.out.println("Finished sending object");
         oos.close();
         s.close();
     }

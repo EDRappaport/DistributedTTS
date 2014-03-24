@@ -1,4 +1,4 @@
-package edu.cooper.ece465.Processor; /**
+package edu.cooper.ece465.Producer; /**
  * Copyright 2001 Sun Microsystems, Inc.
  * 
  * See the file "license.terms" for information on usage and

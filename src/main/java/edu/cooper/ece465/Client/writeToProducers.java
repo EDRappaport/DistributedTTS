@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFormat;
 
-public class writeToProcessors extends Thread{
+public class writeToProducers extends Thread{
 	private int originalPort;
 	private String[] fileNames;
 	private int[] fileSplits;
@@ -39,7 +39,7 @@ public class writeToProcessors extends Thread{
     private DataInputStream dataReader;     
     private PrintWriter writer;
 
-	public writeToProcessors(int originalPort, String[] fileNames, int[] fileSplits, int returnPort, String in_dir){
+	public writeToProducers(int originalPort, String[] fileNames, int[] fileSplits, int returnPort, String in_dir){
 		this.originalPort = originalPort;
 		this.fileNames = fileNames;
 		this.fileSplits = fileSplits;
@@ -134,7 +134,7 @@ public class writeToProcessors extends Thread{
 	        }
 	        sSend.close();
 	    } catch (IOException e){
-	    	System.err.println("writeToProcessors Error: "+e);
+	    	System.err.println("writeToProducers Error: "+e);
 	    	System.exit(-1);
 	    }
 	}

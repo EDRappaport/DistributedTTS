@@ -53,7 +53,7 @@ public class CubbyHole {
         try{
             ret = this.producerQueue.take();
         } catch (InterruptedException e){
-            System.err.println("Processor Take error: " + e);
+            System.err.println("Producer Take error: " + e);
         }
         return ret;
     }
