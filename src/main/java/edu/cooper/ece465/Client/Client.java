@@ -171,6 +171,10 @@ public class Client {
             //request numRequested from Master
             DataInputStream dataFromMaster = new DataInputStream(s.getInputStream());
             DataOutputStream dataToMaster = new DataOutputStream(s.getOutputStream());
+
+            // TODO: Use better logic for originalPort (also implemented in Producer)
+            ServerSocket clientSocket = new ServerSocket(s.getLocalPort()+2);
+
             dataToMaster.writeInt(minRequest);
             dataToMaster.writeInt(numRequested);
             int numGranted = dataFromMaster.readInt();
@@ -182,16 +186,15 @@ public class Client {
                 if (j == fileSplits.length - 1) j = 0;
             }
 
-            // TODO: Fix race condition of server socket for producers to connect to
             int originalPort = s.getLocalPort();
             int returnPort = originalPort+1; // TODO: Use better logic for returnPort
             s.setReuseAddress(true);
 
-            new writeToProducers(originalPort, fileNames, fileSplits, returnPort, inputDirectory).start();
-
-
             //wait for returned pieces
             ServerSocket sRcv = new ServerSocket(returnPort);
+
+            new writeToProducers(clientSocket, fileNames, fileSplits, returnPort, inputDirectory).start();
+
             Map<String, ArrayList<Byte>> allData = new HashMap<>();
             for (int i = 0; i < numGranted; i++){
                 Socket rcvSocket = sRcv.accept();

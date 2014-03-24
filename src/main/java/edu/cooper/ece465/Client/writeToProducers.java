@@ -1,20 +1,9 @@
 package edu.cooper.ece465.Client;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
 import java.net.*;
 import java.io.*;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
 
-import com.sun.speech.freetts.audio.AudioPlayer;
-import com.sun.speech.freetts.audio.JavaStreamingAudioPlayer;
 import com.sun.speech.freetts.util.Utilities;
 
 import java.io.BufferedReader;
@@ -22,10 +11,8 @@ import java.io.DataInputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import javax.sound.sampled.AudioFormat;
-
 public class writeToProducers extends Thread{
-	private int originalPort;
+    private ServerSocket sSend;
 	private String[] fileNames;
 	private int[] fileSplits;
 	private int returnPort;
@@ -39,8 +26,8 @@ public class writeToProducers extends Thread{
     private DataInputStream dataReader;     
     private PrintWriter writer;
 
-	public writeToProducers(int originalPort, String[] fileNames, int[] fileSplits, int returnPort, String in_dir){
-		this.originalPort = originalPort;
+	public writeToProducers(ServerSocket sSend, String[] fileNames, int[] fileSplits, int returnPort, String in_dir){
+		this.sSend = sSend;
 		this.fileNames = fileNames;
 		this.fileSplits = fileSplits;
 		this.returnPort = returnPort;
@@ -108,7 +95,6 @@ public class writeToProducers extends Thread{
 	public void run(){
 
 		try{
-			ServerSocket sSend = new ServerSocket(originalPort);
 			BufferedReader fileReader = null;		
 
 			//loop through images in directory
@@ -120,19 +106,19 @@ public class writeToProducers extends Thread{
 	            ArrayList<String> textPieces = splitFile(fileReader, numPieces);
 
 	            for (int j = 0; j<textPieces.size(); j++){
-		            Socket giveTextSocket = sSend.accept();
+		            Socket giveTextSocket = this.sSend.accept();
 		            System.out.println("Connected to Processing Server");
 	            	writer = new PrintWriter(giveTextSocket.getOutputStream(), true);
 					// send TTS request to server
 					sendLine("TTS\n" +
-						 String.valueOf(sampleRate) + "\n" +
+						 String.valueOf(this.sampleRate) + "\n" +
 						 fileName + "\n" + j + "\n" + giveTextSocket.getLocalAddress().getHostName() + "\n" + returnPort + "\n" +
 						 textPieces.get(j) + "\n" + "DONE");
 
 					giveTextSocket.close();
 	            }
 	        }
-	        sSend.close();
+	        this.sSend.close();
 	    } catch (IOException e){
 	    	System.err.println("writeToProducers Error: "+e);
 	    	System.exit(-1);
