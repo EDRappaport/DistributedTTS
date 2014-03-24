@@ -15,6 +15,10 @@ import java.net.Socket;
  */
 public class Client {
 
+	private DataInputStream dataReader;
+	private static final int AUDIO_BUFFER_SIZE = 256;
+	private byte[] socketBuffer = new byte[AUDIO_BUFFER_SIZE];
+
     private static String[] parseDirectory(String dir_string){
         File dir = new File(dir_string);
         if(!dir.isDirectory()){
@@ -52,6 +56,83 @@ public class Client {
         }
     }
 
+
+    //copied from Sun Microsystems, Inc
+    private String readLine() throws IOException {
+		int i;
+		char c;
+		StringBuffer buffer = new StringBuffer();
+
+		while ((c = (char) dataReader.readByte()) != '\n') {
+		    if (debug) {
+			System.out.println(c);
+		    }
+		    buffer.append(c);
+		}
+
+		int lastCharIndex = buffer.length() - 1;
+		
+		// remove trailing ^M for Windows-based machines
+		byte lastByte = (byte) buffer.charAt(lastCharIndex);
+		if (lastByte == 13) {
+		    return buffer.substring(0, lastCharIndex);
+		} else {
+		    return buffer.toString();
+		}
+    }
+
+
+    private ArrayList<byte[]> receiveAndStore(int numberSamples) {
+
+	int bytesToRead;
+	int bytesRemaining;
+
+	ArrayList<byte[]> allBytes = new ArrayList<byte[]>();
+
+	bytesRemaining = numberSamples;
+
+	while (bytesRemaining > 0) {
+	    
+	    // how many more bytes do we have to read?
+	    if (bytesRemaining >= AUDIO_BUFFER_SIZE) {
+		bytesToRead = AUDIO_BUFFER_SIZE;
+	    } else {
+		bytesToRead = bytesRemaining;
+	    }
+	    
+	    try {
+		// we want to fill the socketBuffer completely before playing
+		int nRead = 0;
+		do {
+		    int read = dataReader.read
+			(socketBuffer, nRead, bytesToRead);
+
+		    if (metrics && !firstByteReceived) {
+			receiveTime = System.currentTimeMillis();
+		    }
+		    nRead += read;
+		    bytesToRead -= read;
+		} while (bytesToRead > 0);
+	       
+		if (nRead < 0) {
+		    System.err.println("error reading samples");
+		} else {
+		    bytesRemaining -= nRead;
+		    
+		    if (!firstByteReceived) {
+			firstSoundTime = System.currentTimeMillis();
+			firstByteReceived = true;
+		    }
+		    allBytes.add(socketBuffer);
+		    
+		}
+	    } catch (IOException ioe) {
+		ioe.printStackTrace();
+	    }
+	    
+	}
+	return allBytes;
+    }
 
 	public static void main(String[] args) throws FileNotFoundException {
 
@@ -133,8 +214,27 @@ public class Client {
 
             //wait for returned pieces
             ServerSocket sRcv = new ServerSocket(returnPort);
+            Map<String, ArrayList<byte[]>> allData = new HashMap<>();
             for (int i = 0; i < numGranted; i++){
                 Socket rcvSocket = sRcv.accept();
+                dataReader = new DataInputStream(sRcv.getInputStream());
+
+                String fileName = readLine();
+                String partNumber = readLine();
+
+				String numberSamplesStr = readLine();
+				int numberSamples = Integer.parseInt(numberSamplesStr);
+				
+				if (numberSamples == -2) { // error
+				    System.err.println("Client.sendTTSRequest(): error!");
+				    System.exit(-1);
+				}		    
+				if (numberSamples > 0) {
+				    System.out.println
+					("Receiving : " + numberSamples + " samples");
+				    ArrayList<byte[]> receivedBytes = receiveAndStore(numberSamples);
+				    allData.put(fileNames+":"+partNumber, receivedBytes);
+				}
             }
 
         } catch (IOException e) {
