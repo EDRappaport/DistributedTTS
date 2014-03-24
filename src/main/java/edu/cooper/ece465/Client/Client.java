@@ -177,7 +177,7 @@ public class Client {
             int returnPort = originalPort+1; // TODO: Use better logic for returnPort
             s.setReuseAddress(true);
 
-            new writeToProcessors(originalPort, fileNames, fileSplits, returnPort, inputDirectory).start();
+            new writeToProducers(originalPort, fileNames, fileSplits, returnPort, inputDirectory).start();
 
 
             //wait for returned pieces

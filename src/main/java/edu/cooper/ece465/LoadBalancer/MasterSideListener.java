@@ -27,7 +27,7 @@ public class MasterSideListener extends Thread {
             ServerSocket serverSocket = new ServerSocket(this.portNumber);
             while (true) {
                 Socket s = serverSocket.accept();
-                System.out.println("Accepted New Worker Connection on Master");
+                System.out.println("Accepted New Producer Connection on Master");
                 InputStream is = s.getInputStream();
                 ObjectInputStream ois = new ObjectInputStream(is);
                 NodeData nodeData = (NodeData) ois.readObject();

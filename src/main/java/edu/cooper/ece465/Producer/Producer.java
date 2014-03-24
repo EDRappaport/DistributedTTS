@@ -1,4 +1,4 @@
-package edu.cooper.ece465.Processor;
+package edu.cooper.ece465.Producer;
 
 import edu.cooper.ece465.Master.NodeData;
 
@@ -10,7 +10,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-public class Worker{
+public class Producer {
 
 	private static int THREAD_POOL_SIZE;
 
@@ -18,7 +18,7 @@ public class Worker{
         
 		//check input
         if (args.length != 2){
-            System.err.println("Usage java Worker <Master host name> <Master port number>");
+            System.err.println("Usage java Producer <Master host name> <Master port number>");
             System.exit(1);
         }
         String masterHostName = args[0];

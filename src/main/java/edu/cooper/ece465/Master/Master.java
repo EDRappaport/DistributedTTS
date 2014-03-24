@@ -18,6 +18,6 @@ public class Master {
         new LBChatter(c, loadBalancerHost,loadBalancerPort, clientPort).start();
         new ProducerListener(c, producerPort).start();
     	new ClientListener(c, clientPort).start();
-        new ClientProcessorAssigner(c).start();
+        new ClientProducerAssigner(c).start();
     }
 }
