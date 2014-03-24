@@ -62,6 +62,7 @@ public class Producer {
                 infoSocket.close();
 
                 System.out.println("attempting to connect to client: " + clientData);
+                Thread.sleep(5000);
                 Socket clientSocket = new Socket(hostName, clientPort);
 
 //                TTSWorker server = new TTSWorker();
@@ -75,6 +76,8 @@ public class Producer {
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
