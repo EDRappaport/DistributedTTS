@@ -233,6 +233,8 @@ class SocketTTSHandler implements Runnable {
         String returnPort = reader.readLine();
 	    String text = reader.readLine();
 
+        System.out.println("rAddr: "+returnAddress+" ; rPort: "+returnPort);
+
         Socket returnSocket = new Socket(returnAddress, Integer.parseInt(returnPort));
         this.socketAudioPlayer = new SocketAudioPlayer(returnSocket, fileName, partNumber);
 
