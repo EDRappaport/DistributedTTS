@@ -87,49 +87,18 @@ public class Client {
 	int bytesToRead;
 	int bytesRemaining;
 
-	ArrayList<byte[]> allBytes = new ArrayList<byte[]>();
+	ArrayList<byte> allBytes = new ArrayList<byte>();
 
 	bytesRemaining = numberSamples;
 
 	while (bytesRemaining > 0) {
-	    
-	    // how many more bytes do we have to read?
-	    if (bytesRemaining >= AUDIO_BUFFER_SIZE) {
-		bytesToRead = AUDIO_BUFFER_SIZE;
-	    } else {
-		bytesToRead = bytesRemaining;
-	    }
-	    
-	    try {
-		// we want to fill the socketBuffer completely before playing
-		int nRead = 0;
-		do {
-		    int read = dataReader.read
-			(socketBuffer, nRead, bytesToRead);
 
-		    if (metrics && !firstByteReceived) {
-			receiveTime = System.currentTimeMillis();
-		    }
-		    nRead += read;
-		    bytesToRead -= read;
-		} while (bytesToRead > 0);
-	       
-		if (nRead < 0) {
-		    System.err.println("error reading samples");
-		} else {
-		    bytesRemaining -= nRead;
-		    
-		    if (!firstByteReceived) {
-			firstSoundTime = System.currentTimeMillis();
-			firstByteReceived = true;
-		    }
-		    allBytes.add(socketBuffer);
-		    
-		}
-	    } catch (IOException ioe) {
+		try{
+			allBytes.add(socketBuffer);
+			bytesRemaining--;
+		} catch (IOException ioe) {
 		ioe.printStackTrace();
 	    }
-	    
 	}
 	return allBytes;
     }
@@ -232,9 +201,20 @@ public class Client {
 				if (numberSamples > 0) {
 				    System.out.println
 					("Receiving : " + numberSamples + " samples");
-				    ArrayList<byte[]> receivedBytes = receiveAndStore(numberSamples);
+				    ArrayList<byte> receivedBytes = receiveAndStore(numberSamples);
 				    allData.put(fileNames+":"+partNumber, receivedBytes);
 				}
+            }
+
+            for (int i = 0; i<fileNames.length; i++){
+            	ArrayList<byte> curBytes = new ArrayList<byte>();
+            	for(int j = 0; j<fileSplits[i]; j++){
+            		curBytes.addAll(allData.get(fileNames[i]+":"+j));
+            	}
+            	File dstFile = new File(outputDirectory+"/"+fileNames[i]+".wav");
+            	FileOutputStream out = new FileOutputStream(dstFile);
+            	out.write(curBytes);
+            	out.close();
             }
 
         } catch (IOException e) {
