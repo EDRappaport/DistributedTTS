@@ -1,7 +1,13 @@
 package edu.cooper.ece465.Client;
 
+import com.sun.speech.freetts.Tokenizer;
+import com.sun.speech.freetts.UtteranceProcessor;
+import com.sun.speech.freetts.Voice;
+import com.sun.speech.freetts.VoiceManager;
+import com.sun.speech.freetts.audio.SingleFileAudioPlayer;
 import edu.cooper.ece465.Master.NodeData;
 
+import javax.sound.sampled.AudioFileFormat;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -218,8 +224,14 @@ public class Client {
                 for (int k=0; k<b.length; k++) {
                     b[k] = curBytes.get(k);
                 }
-            	out.write(b);
+//            	out.write(b);
             	out.close();
+
+                SingleFileAudioPlayer sfap = new SingleFileAudioPlayer(outputDirectory+"/"+fileNames[i]+".wav", AudioFileFormat.Type.WAVE);
+                sfap.write(b);
+                sfap.close();
+
+
             }
 
         } catch (IOException e) {
