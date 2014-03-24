@@ -61,6 +61,7 @@ public class Producer {
                 sRcv.close();
                 infoSocket.close();
 
+                System.out.println("attempting to connect to client: " + clientData);
                 Socket clientSocket = new Socket(hostName, clientPort);
 
 //                TTSWorker server = new TTSWorker();
