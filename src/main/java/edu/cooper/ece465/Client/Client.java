@@ -215,8 +215,8 @@ public class Client {
 
             for (int i = 0; i<fileNames.length; i++){
                 ArrayList<Byte> curBytes = new ArrayList<>();
-                for(int j = 0; j<fileSplits[i]; j++){
-                    curBytes.addAll(allData.get(fileNames[i]+":"+j));
+                for(int j = 0; j<fileSplits[i] + 1; j++){
+                    curBytes.addAll(allData.get(inputDirectory + fileNames[i]+":"+j));
                 }
                 File dstFile = new File(outputDirectory+"/"+fileNames[i]+".wav");
                 FileOutputStream out = new FileOutputStream(dstFile);
@@ -231,8 +231,9 @@ public class Client {
                 System.out.println("sfap: " + sfap + " " + b.length);
                 sfap.begin(b.length);
                 sfap.write(b);
+                sfap.drain();
                 sfap.end();
-                //sfap.close();
+                sfap.close();
 
 
             }
