@@ -209,7 +209,7 @@ public class Client {
                     System.out.println
                     ("Receiving : " + numberSamples + " samples");
                     ArrayList<Byte> receivedBytes = receiveAndStore(numberSamples);
-                    allData.put(fileNames+":"+partNumber, receivedBytes);
+                    allData.put(fileName+":"+partNumber, receivedBytes);
                 }
             }
 
