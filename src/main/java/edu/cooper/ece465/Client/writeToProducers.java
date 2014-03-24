@@ -126,7 +126,7 @@ public class writeToProducers extends Thread{
 					// send TTS request to server
 					sendLine("TTS\n" +
 						 String.valueOf(sampleRate) + "\n" +
-						 fileName + "\n" + j + "\n" + giveTextSocket.getLocalAddress() + "\n" + returnPort + "\n" +
+						 fileName + "\n" + j + "\n" + giveTextSocket.getLocalAddress().getHostName() + "\n" + returnPort + "\n" +
 						 textPieces.get(j) + "\n" + "DONE");
 
 					giveTextSocket.close();
