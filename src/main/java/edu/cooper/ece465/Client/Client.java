@@ -23,9 +23,9 @@ import java.util.Map;
  */
 public class Client {
 
-	static private DataInputStream dataReader;
-	private static final int AUDIO_BUFFER_SIZE = 256;
-	private byte[] socketBuffer = new byte[AUDIO_BUFFER_SIZE];
+    static private DataInputStream dataReader;
+    private static final int AUDIO_BUFFER_SIZE = 256;
+    private byte[] socketBuffer = new byte[AUDIO_BUFFER_SIZE];
 
     private static String[] parseDirectory(String dir_string){
         File dir = new File(dir_string);
@@ -67,50 +67,50 @@ public class Client {
 
     //copied from Sun Microsystems, Inc
     static private String readLine() throws IOException {
-		int i;
-		char c;
-		StringBuffer buffer = new StringBuffer();
+        int i;
+        char c;
+        StringBuffer buffer = new StringBuffer();
 
-		while ((c = (char) dataReader.readByte()) != '\n') {
-		    buffer.append(c);
-		}
+        while ((c = (char) dataReader.readByte()) != '\n') {
+            buffer.append(c);
+        }
 
-		int lastCharIndex = buffer.length() - 1;
-		
-		// remove trailing ^M for Windows-based machines
-		byte lastByte = (byte) buffer.charAt(lastCharIndex);
-		if (lastByte == 13) {
-		    return buffer.substring(0, lastCharIndex);
-		} else {
-		    return buffer.toString();
-		}
+        int lastCharIndex = buffer.length() - 1;
+        
+        // remove trailing ^M for Windows-based machines
+        byte lastByte = (byte) buffer.charAt(lastCharIndex);
+        if (lastByte == 13) {
+            return buffer.substring(0, lastCharIndex);
+        } else {
+            return buffer.toString();
+        }
     }
 
 
     private static ArrayList<Byte> receiveAndStore(int numberSamples) {
 
-	int bytesToRead;
-	int bytesRemaining;
+    int bytesToRead;
+    int bytesRemaining;
 
-	ArrayList<Byte> allBytes = new ArrayList<>();
+    ArrayList<Byte> allBytes = new ArrayList<>();
 
-	bytesRemaining = numberSamples;
+    bytesRemaining = numberSamples;
 
-	while (bytesRemaining > 0) {
+    while (bytesRemaining > 0) {
 
-		try{
-			allBytes.add(dataReader.readByte());
-			bytesRemaining--;
-		} catch (IOException ioe) {
-		ioe.printStackTrace();
-	    }
-	}
-	return allBytes;
+        try{
+            allBytes.add(dataReader.readByte());
+            bytesRemaining--;
+        } catch (IOException ioe) {
+        ioe.printStackTrace();
+        }
+    }
+    return allBytes;
     }
 
-	public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException {
 
-		//check input
+        //check input
         if (args.length != 4){
             System.err.println("Usage java Client <LB host name> <LB port number> <original directory> <output directory>");
             System.exit(1);
@@ -145,11 +145,11 @@ public class Client {
             }
 
             fileSplits[i] = numLines/10;
-        	numRequested += fileSplits[i] + 1;
+            numRequested += fileSplits[i] + 1;
         }
         minRequest = fileNames.length; //need at least minRequest Workers
 
-		//connect to Load Balancer
+        //connect to Load Balancer
         System.out.println("Connecting To Load Balancer");
         try {
             Socket sLB = new Socket(hostName, portNumber);
@@ -198,38 +198,41 @@ public class Client {
 
                 System.out.println("FN: "+fileName+" ; PN: "+partNumber);
 
-				String numberSamplesStr = readLine();
-				int numberSamples = Integer.parseInt(numberSamplesStr);
-				
-				if (numberSamples == -2) { // error
-				    System.err.println("Client.sendTTSRequest(): error!");
-				    System.exit(-1);
-				}		    
-				if (numberSamples > 0) {
-				    System.out.println
-					("Receiving : " + numberSamples + " samples");
-				    ArrayList<Byte> receivedBytes = receiveAndStore(numberSamples);
-				    allData.put(fileNames+":"+partNumber, receivedBytes);
-				}
+                String numberSamplesStr = readLine();
+                int numberSamples = Integer.parseInt(numberSamplesStr);
+                
+                if (numberSamples == -2) { // error
+                    System.err.println("Client.sendTTSRequest(): error!");
+                    System.exit(-1);
+                }           
+                if (numberSamples > 0) {
+                    System.out.println
+                    ("Receiving : " + numberSamples + " samples");
+                    ArrayList<Byte> receivedBytes = receiveAndStore(numberSamples);
+                    allData.put(fileNames+":"+partNumber, receivedBytes);
+                }
             }
 
             for (int i = 0; i<fileNames.length; i++){
-            	ArrayList<Byte> curBytes = new ArrayList<>();
-            	for(int j = 0; j<fileSplits[i]; j++){
-            		curBytes.addAll(allData.get(fileNames[i]+":"+j));
-            	}
-            	File dstFile = new File(outputDirectory+"/"+fileNames[i]+".wav");
-            	FileOutputStream out = new FileOutputStream(dstFile);
+                ArrayList<Byte> curBytes = new ArrayList<>();
+                for(int j = 0; j<fileSplits[i]; j++){
+                    curBytes.addAll(allData.get(fileNames[i]+":"+j));
+                }
+                File dstFile = new File(outputDirectory+"/"+fileNames[i]+".wav");
+                FileOutputStream out = new FileOutputStream(dstFile);
                 byte[] b = new byte[curBytes.size()];
                 for (int k=0; k<b.length; k++) {
                     b[k] = curBytes.get(k);
                 }
-//            	out.write(b);
-            	out.close();
+//              out.write(b);
+                out.close();
 
                 SingleFileAudioPlayer sfap = new SingleFileAudioPlayer(outputDirectory+"/"+fileNames[i]+".wav", AudioFileFormat.Type.WAVE);
+                System.out.println("sfap: " + sfap + " " + b.length);
+                sfap.begin(b.length);
                 sfap.write(b);
-                sfap.close();
+                sfap.end();
+                //sfap.close();
 
 
             }
@@ -239,5 +242,5 @@ public class Client {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-	}
+    }
 }
