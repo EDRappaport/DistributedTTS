@@ -16,6 +16,7 @@ public class ClientProducerAssigner extends Thread {
         System.out.println("Sending New Assignment to " + client);
         ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
         oos.writeObject(client);
+        System.out.println("Finished sending object");
         oos.close();
         s.close();
     }
