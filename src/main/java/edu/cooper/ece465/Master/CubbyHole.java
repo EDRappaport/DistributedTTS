@@ -57,4 +57,8 @@ public class CubbyHole {
         }
         return ret;
     }
+
+    public PriorityBlockingQueue<NodeData> getProducers(){
+        return this.producerQueue;
+    }
 }
