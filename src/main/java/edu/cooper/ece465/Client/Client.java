@@ -190,7 +190,7 @@ public class Client {
                 String fileName = readLine();
                 String partNumber = readLine();
 
-                System.out.println("FN: "+fileName+" ; PN: "partNumber);
+                System.out.println("FN: "+fileName+" ; PN: "+partNumber);
 
 				String numberSamplesStr = readLine();
 				int numberSamples = Integer.parseInt(numberSamplesStr);
