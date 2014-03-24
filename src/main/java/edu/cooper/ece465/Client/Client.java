@@ -4,10 +4,14 @@ import com.sun.speech.freetts.Tokenizer;
 import com.sun.speech.freetts.UtteranceProcessor;
 import com.sun.speech.freetts.Voice;
 import com.sun.speech.freetts.VoiceManager;
+import com.sun.speech.freetts.audio.AudioPlayer;
+import com.sun.speech.freetts.audio.JavaStreamingAudioPlayer;
+import com.sun.speech.freetts.audio.RawFileAudioPlayer;
 import com.sun.speech.freetts.audio.SingleFileAudioPlayer;
 import edu.cooper.ece465.Master.NodeData;
 
 import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -218,22 +222,30 @@ public class Client {
                 for(int j = 0; j<fileSplits[i] + 1; j++){
                     curBytes.addAll(allData.get(inputDirectory + fileNames[i]+":"+j));
                 }
-                File dstFile = new File(outputDirectory+"/"+fileNames[i]+".wav");
-                FileOutputStream out = new FileOutputStream(dstFile);
+//                File dstFile = new File(outputDirectory+"/"+fileNames[i]+".wav");
+//                FileOutputStream out = new FileOutputStream(dstFile);
                 byte[] b = new byte[curBytes.size()];
                 for (int k=0; k<b.length; k++) {
                     b[k] = curBytes.get(k);
                 }
 //              out.write(b);
-                out.close();
+//                out.close();
 
-                SingleFileAudioPlayer sfap = new SingleFileAudioPlayer(outputDirectory+"/"+fileNames[i]+".wav", AudioFileFormat.Type.WAVE);
-                System.out.println("sfap: " + sfap + " " + b.length);
-                sfap.begin(b.length);
-                sfap.write(b);
-                sfap.drain();
-                sfap.end();
-                sfap.close();
+//                SingleFileAudioPlayer sfap = new SingleFileAudioPlayer(outputDirectory+"/"+fileNames[i]+".wav", AudioFileFormat.Type.WAVE);
+//                System.out.println("sfap: " + sfap + " " + b.length);
+//                sfap.begin(b.length);
+//                sfap.write(b);
+//                sfap.end();
+//                sfap.close();
+
+                AudioPlayer audioPlayer = new JavaStreamingAudioPlayer();
+                audioPlayer.setAudioFormat
+                        (new AudioFormat(16000, 16, 1, true, true));
+                audioPlayer.begin(b.length);
+                audioPlayer.write(b);
+                audioPlayer.end();
+                audioPlayer.drain();
+                audioPlayer.close();
 
 
             }
