@@ -114,6 +114,9 @@ public class Client {
 
     public static void main(String[] args) throws FileNotFoundException {
 
+        long startTime = System.currentTimeMillis();
+        System.out.println("startTime: "+startTime);
+
         //check input
         if (args.length != 4){
             System.err.println("Usage java Client <LB host name> <LB port number> <original directory> <output directory>");
@@ -240,6 +243,11 @@ public class Client {
 //                sfap.write(b);
 //                sfap.end();
 //                sfap.close();
+
+        long endTime = System.currentTimeMillis();
+        System.out.println("endTime: "+endTime);
+        long runTime = endTime - startTime;
+        System.out.println("run time: "+runTime);
 
                 AudioPlayer audioPlayer = new JavaStreamingAudioPlayer();
                 audioPlayer.setAudioFormat
