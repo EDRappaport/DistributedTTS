@@ -183,7 +183,7 @@ public class Client {
             for (int i = 0, j = 0; i < numRequested - numGranted; i++, j++){
                 if (fileSplits[j] > 0) fileSplits[j]--;
                 else i--;
-                if (j == fileSplits.length - 1) j = 0;
+                if (j == fileSplits.length - 1) j = -1;
             }
 
             int originalPort = s.getLocalPort();
