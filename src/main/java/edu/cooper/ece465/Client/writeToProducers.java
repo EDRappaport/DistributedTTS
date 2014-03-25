@@ -67,7 +67,6 @@ public class writeToProducers extends Thread{
 
 	private static ArrayList<String> splitFile(BufferedReader fileReader, int numPieces) throws IOException {
         ArrayList<String> allLines = new ArrayList<String>();
-        ArrayList<String> textPieces = new ArrayList<String>();
 		String line = fileReader.readLine();
 		for (int i = 0; line != null; i++){
 			allLines.add(line);
@@ -75,11 +74,13 @@ public class writeToProducers extends Thread{
 		}
 
 		int numLines = allLines.size();
+		ArrayList<String> textPieces = new ArrayList<String>(numLines);
 		int linesPerWorker = numLines/numPieces;
 		int i, j;
 		//ex. 107 totalLines: 10 pieces each of 10 lines,
 		//last piece of remaining 7 lines
 		for (i = 0, j = 0; i<numPieces-1; i++){
+			textPieces.add("");
 			for (int k = 0; k<linesPerWorker; k++){
 				textPieces.add(textPieces.get(i)+allLines.get(j++));
 			}

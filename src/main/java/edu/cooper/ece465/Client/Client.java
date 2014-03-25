@@ -227,6 +227,11 @@ System.out.println(fileSplits[0]);
                 }
             }
 
+        long endTime = System.currentTimeMillis();
+        System.out.println("endTime: "+endTime);
+        long runTime = endTime - startTime;
+        System.out.println("run time: "+runTime);
+
             for (int i = 0; i<fileNames.length; i++){
                 ArrayList<Byte> curBytes = new ArrayList<>();
                 for(int j = 0; j<fileSplits[i] + 1; j++){
@@ -241,17 +246,14 @@ System.out.println(fileSplits[0]);
 //              out.write(b);
 //                out.close();
 
-//                SingleFileAudioPlayer sfap = new SingleFileAudioPlayer(outputDirectory+"/"+fileNames[i]+".wav", AudioFileFormat.Type.WAVE);
-//                System.out.println("sfap: " + sfap + " " + b.length);
-//                sfap.begin(b.length);
-//                sfap.write(b);
-//                sfap.end();
-//                sfap.close();
-
-        long endTime = System.currentTimeMillis();
-        System.out.println("endTime: "+endTime);
-        long runTime = endTime - startTime;
-        System.out.println("run time: "+runTime);
+                SingleFileAudioPlayer sfap = new SingleFileAudioPlayer(outputDirectory+"/"+fileNames[i]+".wav", AudioFileFormat.Type.WAVE);
+                sfap.setAudioFormat
+                    (new AudioFormat(16000, 16, 1, true, true));
+                System.out.println("sfap: " + sfap + " " + b.length);
+                sfap.begin(b.length);
+                sfap.write(b);
+                sfap.end();
+                sfap.close();
 
                 AudioPlayer audioPlayer = new JavaStreamingAudioPlayer();
                 audioPlayer.setAudioFormat
