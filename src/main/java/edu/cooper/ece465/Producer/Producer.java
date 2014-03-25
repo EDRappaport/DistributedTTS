@@ -26,34 +26,43 @@ public class Producer {
 
         THREAD_POOL_SIZE =  Runtime.getRuntime().availableProcessors();
 
+        Socket s,infoSocket,clientSocket;
+        ServerSocket sRcv;
+        InputStream is;
+        ObjectInputStream ois;
+        OutputStream os;
+        ObjectOutputStream oos;
+        OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        NodeData data, clientData;
+        TTSWorker server;
+
         while(true){
         	System.out.println("Waiting for Next Assignment");
 
             try {
                 //attach to Master to introduce
-                Socket s = new Socket(masterHostName,masterPortNumber); // To ProducerListener
+                s = new Socket(masterHostName,masterPortNumber); // To ProducerListener
                 int originalPort = s.getLocalPort();
                 s.setReuseAddress(true);
                 System.out.println("Introduced to Master");
 
                 //tell Master your info
-                OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
                 double load = osBean.getSystemLoadAverage();
-                NodeData data = new NodeData(s.getLocalAddress().getHostName(), originalPort,
+                data = new NodeData(s.getLocalAddress().getHostName(), originalPort,
                         1, load, -1);
-                OutputStream os = s.getOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(os);
+                os = s.getOutputStream();
+                oos = new ObjectOutputStream(os);
                 oos.writeObject(data);
                 oos.close();
                 os.close();
 
                 //acccept info from Master
                 System.out.println("Waiting for assignment");
-                ServerSocket sRcv = new ServerSocket(originalPort);
-                Socket infoSocket = sRcv.accept();
-                InputStream is = infoSocket.getInputStream();
-                ObjectInputStream ois = new ObjectInputStream(is);
-                NodeData clientData = (NodeData) ois.readObject();
+                sRcv = new ServerSocket(originalPort);
+                infoSocket = sRcv.accept();
+                is = infoSocket.getInputStream();
+                ois = new ObjectInputStream(is);
+                clientData = (NodeData) ois.readObject();
 
                 String hostName = clientData.getHostname();
                 int clientPort = clientData.getPortNumber()+2;
@@ -62,11 +71,10 @@ public class Producer {
                 infoSocket.close();
 
                 System.out.println("attempting to connect to client: " + clientData);
-                Socket clientSocket = new Socket(hostName, clientPort);
+                clientSocket = new Socket(hostName, clientPort);
 
-                TTSWorker server = new TTSWorker();
+                server = new TTSWorker();
                 server.spawnProtocolHandler(clientSocket);
-
 
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
