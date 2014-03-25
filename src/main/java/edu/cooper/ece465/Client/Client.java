@@ -184,14 +184,14 @@ public class Client {
 
             //adjust fileSplits
 		System.out.println(fileSplits.length);
-System.out.println(fileSplits[0]);
+        System.out.println(fileSplits[0]);
             for (int i = 0, j = 0; i < numRequested - numGranted; i++, j++){
-System.out.println(fileSplits[0]);
+                System.out.println(fileSplits[0]);
                 if (fileSplits[j] > 0) fileSplits[j]--;
                 else i--;
                 if (j == fileSplits.length - 1) j = -1;
             }
-System.out.println(fileSplits[0]);
+            System.out.println(fileSplits[0]);
 
             int originalPort = s.getLocalPort();
             int returnPort = originalPort+1; // TODO: Use better logic for returnPort
@@ -227,10 +227,10 @@ System.out.println(fileSplits[0]);
                 }
             }
 
-        long endTime = System.currentTimeMillis();
-        System.out.println("endTime: "+endTime);
-        long runTime = endTime - startTime;
-        System.out.println("run time: "+runTime);
+            long endTime = System.currentTimeMillis();
+            System.out.println("endTime: "+endTime);
+            long runTime = endTime - startTime;
+            System.out.println("run time: "+runTime);
 
             for (int i = 0; i<fileNames.length; i++){
                 ArrayList<Byte> curBytes = new ArrayList<>();
@@ -246,10 +246,9 @@ System.out.println(fileSplits[0]);
 //              out.write(b);
 //                out.close();
 
-                SingleFileAudioPlayer sfap = new SingleFileAudioPlayer(outputDirectory+"/"+fileNames[i]+".wav", AudioFileFormat.Type.WAVE);
+                SingleFileAudioPlayer sfap = new SingleFileAudioPlayer(outputDirectory+"/"+fileNames[i], AudioFileFormat.Type.WAVE);
                 sfap.setAudioFormat
                     (new AudioFormat(16000, 16, 1, true, true));
-                System.out.println("sfap: " + sfap + " " + b.length);
                 sfap.begin(b.length);
                 sfap.write(b);
                 sfap.end();
