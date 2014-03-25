@@ -80,6 +80,7 @@ public class writeToProducers extends Thread{
 		//ex. 107 totalLines: 10 pieces each of 10 lines,
 		//last piece of remaining 7 lines
 		for (i = 0, j = 0; i<numPieces-1; i++){
+			textPieces.add("");
 			for (int k = 0; k<linesPerWorker; k++){
 				textPieces.add(textPieces.get(i)+allLines.get(j++));
 			}
