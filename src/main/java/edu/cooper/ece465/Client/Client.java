@@ -180,11 +180,15 @@ public class Client {
             int numGranted = dataFromMaster.readInt();
 
             //adjust fileSplits
+		System.out.println(fileSplits.length);
+System.out.println(fileSplits[0]);
             for (int i = 0, j = 0; i < numRequested - numGranted; i++, j++){
+System.out.println(fileSplits[0]);
                 if (fileSplits[j] > 0) fileSplits[j]--;
                 else i--;
-                if (j == fileSplits.length - 1) j = 0;
+                if (j == fileSplits.length - 1) j = -1;
             }
+System.out.println(fileSplits[0]);
 
             int originalPort = s.getLocalPort();
             int returnPort = originalPort+1; // TODO: Use better logic for returnPort
