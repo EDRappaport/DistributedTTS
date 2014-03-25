@@ -82,7 +82,7 @@ public class writeToProducers extends Thread{
 		for (i = 0, j = 0; i<numPieces-1; i++){
 			textPieces.add("");
 			for (int k = 0; k<linesPerWorker; k++){
-				textPieces.add(textPieces.get(i)+allLines.get(j++));
+				textPieces.set(i, textPieces.get(i)+allLines.get(j++));
 			}
 		}
         textPieces.add("");
